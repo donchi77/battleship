@@ -1,3 +1,5 @@
+#ifndef ERR_HANDLER_H
+    #define ERR_HANDLER_H
 #define MAX_CHAR 1024
 
 void fatal(char *message) {
@@ -26,3 +28,5 @@ void *errorchecked_malloc(unsigned int size) {
     
     return ptr;
 }
+
+#endif

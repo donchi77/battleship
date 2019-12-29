@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include <stdbool.h> 
 
-#define SERVER_PORT 50000
+#define SERVER_PORT 8080
 
 bool check = true;
 
@@ -14,7 +14,7 @@ void player1(int ,int);
 void player2(int ,int);
 
 int main (int argc, char **argv) {
-	int socketAttesa, client_len, socketComunica[2];
+	int socketAttesa, client_len, socketComunica;
 	int asciLetto;                       
 	struct sockaddr_in server, client;
 	
@@ -38,16 +38,23 @@ int main (int argc, char **argv) {
 	listen(socketAttesa, 2);           
 
   	printf ("accept()\n");
-  	for(int i = 0 ; i < 2 ; i++){
+  	//for(int i = 0 ; i < 2 ; i++){
 	  client_len = sizeof(client);
-	  if ((socketComunica[i] = accept(socketAttesa, (struct sockaddr*)&client, &client_len)) < 0)
+	  if ((socketComunica = accept(socketAttesa, (struct sockaddr*)&client, &client_len)) < 0)
 	  {
 	    perror("connessione non accettata");
 	    return(3);
 	  }
-	  
-	  printf("OMEGALUL");
-	}
+
+	  char c = 'a';
+	  recv(socketComunica, &c, 1, 0);
+	  printf("char %c", c);
+	  send(socketComunica, &c, 1, 0);
+
+	  close(socketComunica);
+}
+	/*}
+
 	
 	printf("KEKW");
 	
@@ -66,6 +73,8 @@ int main (int argc, char **argv) {
 void player1(int in ,int out){
 	char p1;
 	
+	printf("monkaS_1");
+	
   	if(recv(in, &p1, 1, 0) > 0){
 	    printf("\nil carattere ricevuto da p1 e': %c", p1);
 	    send(out, &p1, 1, 0);
@@ -75,8 +84,10 @@ void player1(int in ,int out){
 void player2(int in ,int out){
 	char p2;
 	
+	printf("monkaS_2");
+	
   	if(recv(in, &p2, 1, 0) > 0){
 	    printf("\nil carattere ricevuto da p2 e': %c ", p2);
 	    send(out, &p2, 1, 0);
   	}
-}
+}*/
