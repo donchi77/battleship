@@ -14,7 +14,7 @@ void player1(int ,int);
 void player2(int ,int);
 
 int main (int argc, char **argv) {
-	int socketAttesa, client_len, socketComunica[2];
+	int socketAttesa, client_len, socketComunica;
 	int asciLetto;                       
 	struct sockaddr_in server, client;
 	
@@ -40,7 +40,7 @@ int main (int argc, char **argv) {
   	printf ("accept()\n");
   	for(int i = 0 ; i < 2 ; i++){
 	  client_len = sizeof(client);
-	  if ((socketComunica[i] = accept(socketAttesa, (struct sockaddr*)&client, &client_len)) < 0)
+	  if ((socketComunica = accept(socketAttesa, (struct sockaddr*)&client, &client_len)) < 0)
 	  {
 	    perror("connessione non accettata");
 	    return(3);
@@ -48,6 +48,7 @@ int main (int argc, char **argv) {
 	}
 	
 	printf("KEKW");
+	
 	while(check){
 		printf("monkaS");
 		player1(socketComunica[0], socketComunica[1]);
