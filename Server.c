@@ -59,17 +59,14 @@ int main (int argc, char **argv) {
 }
 
 void player1(int in ,int out){
-	char p1;
-  	if(recv(in, &p1, 1, 0) > 0){
-	    printf("\nil carattere ricevuto da p1 e': %c", p1);
-	    send(out, &p1, 1, 0);
-  	}
+	char p1 = 1;
+	send(out, &p1, 1, 0);
 }
 
 void player2(int in ,int out){
-	char p2;
-  	if(recv(in, &p2, 1, 0) > 0){
-	    printf("\nil carattere ricevuto da p2 e': %c ", p2);
+	char p2 = 2, p1;
+  	if(recv(in, &p1, 1, 0) > 0){
+	    printf("\nil carattere ricevuto da p2 e': %c ", p1);
 	    send(out, &p2, 1, 0);
   	}
 }
