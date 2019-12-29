@@ -14,7 +14,7 @@ void player1(int ,int);
 void player2(int ,int);
 
 int main (int argc, char **argv) {
-	int socketAttesa, client_len, socketComunica;
+	int socketAttesa, client_len, socketComunica[2];
 	int asciLetto;                       
 	struct sockaddr_in server, client;
 	
@@ -40,31 +40,31 @@ int main (int argc, char **argv) {
   	printf ("accept()\n");
   	for(int i = 0 ; i < 2 ; i++){
 	  client_len = sizeof(client);
-	  if ((socketComunica = accept(socketAttesa, (struct sockaddr*)&client, &client_len)) < 0)
+	  if ((socketComunica[i] = accept(socketAttesa, (struct sockaddr*)&client, &client_len)) < 0)
 	  {
 	    perror("connessione non accettata");
 	    return(3);
 	  }
+	  
+	  printf("OMEGALUL");
 	}
 	
 	printf("KEKW");
 	
 	while(check){
 		printf("monkaS");
-		player1(socketComunica, socketComunica);
-		player2(socketComunica, socketComunica);
+		player1(socketComunica[0], socketComunica[1]);
+		player2(socketComunica[1], socketComunica[0]);
 		
 		//controllo caso di vittoria
 	}
 	
-	close(socketComunica);
-	close(socketComunica);
+	close(socketComunica[0]);
+	close(socketComunica[1]);
 }
 
 void player1(int in ,int out){
 	char p1;
-	
-	printf("monkaS_1");
 	
   	if(recv(in, &p1, 1, 0) > 0){
 	    printf("\nil carattere ricevuto da p1 e': %c", p1);
@@ -74,8 +74,6 @@ void player1(int in ,int out){
 
 void player2(int in ,int out){
 	char p2;
-	
-	printf("monkaS_2");
 	
   	if(recv(in, &p2, 1, 0) > 0){
 	    printf("\nil carattere ricevuto da p2 e': %c ", p2);
