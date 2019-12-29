@@ -51,14 +51,14 @@ int main (int argc, char **argv) {
 	
 	while(check){
 		printf("monkaS");
-		player1(socketComunica[0], socketComunica[1]);
-		player2(socketComunica[1], socketComunica[0]);
+		player1(socketComunica, socketComunica);
+		player2(socketComunica, socketComunica);
 		
 		//controllo caso di vittoria
 	}
 	
-	close(socketComunica[0]);
-	close(socketComunica[1]);
+	close(socketComunica);
+	close(socketComunica);
 }
 
 void player1(int in ,int out){
