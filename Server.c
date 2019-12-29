@@ -14,39 +14,40 @@ void player1(int ,int);
 void player2(int ,int);
 
 int main (int argc, char **argv) {
-  int socketAttesa, client_len, socketComunica[2];
-  int asciLetto;                       
-  struct sockaddr_in server, client[2];
+	int socketAttesa, client_len, socketComunica[2];
+	int asciLetto;                       
+	struct sockaddr_in server, client;
+	
+	printf ("socket()\n");
+	if((socketAttesa = socket(AF_INET, SOCK_STREAM, 0)) == -1){
+		perror("chiamata della system call socket() fallita");
+		return(1);
+	}
+	
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = htonl(INADDR_ANY);
+	server.sin_port = htons(SERVER_PORT);
+	
+	printf ("bind()\n");
+	if (bind(socketAttesa, (struct sockaddr*)&server, sizeof server) == -1){
+		perror("chiamata della bind() fallita");
+		return(2);
+	}
+	
+	printf ("listen()\n");
+	listen(socketAttesa, 2);           
 
-  printf ("socket()\n");
-  if((socketAttesa = socket(AF_INET, SOCK_STREAM, 0)) == -1){
-    perror("chiamata della system call socket() fallita");
-    return(1);
-  }
-  
-  server.sin_family = AF_INET;
-  server.sin_addr.s_addr = htonl(INADDR_ANY);
-  server.sin_port = htons(SERVER_PORT);
-
-  printf ("bind()\n");
-  if (bind(socketAttesa, (struct sockaddr*)&server, sizeof server) == -1){
-    perror("chiamata della bind() fallita");
-    return(2);
-  }
-  
-  printf ("listen()\n");
-  listen(socketAttesa, 2);           
-
-  printf ("accept()\n");
-  for(int i = 0 ; i < 2 ; i++){
-	  client_len = sizeof(client[i]);
-	  if ((socketComunica[i] = accept(socketAttesa, (struct sockaddr*)&client[i], &client_len)) < 0)
+  	printf ("accept()\n");
+  	for(int i = 0 ; i < 2 ; i++){
+	  client_len = sizeof(client);
+	  if ((socketComunica[i] = accept(socketAttesa, (struct sockaddr*)&client, &client_len)) < 0)
 	  {
 	    perror("connessione non accettata");
 	    return(3);
 	  }
 	}
 	
+	printf("KEKW");
 	while(check){
 		printf("monkaS");
 		player1(socketComunica[0], socketComunica[1]);
