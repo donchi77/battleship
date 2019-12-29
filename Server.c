@@ -48,6 +48,7 @@ int main (int argc, char **argv) {
 	}
 	
 	while(check){
+		printf("monkaS");
 		player1(socketComunica[0], socketComunica[1]);
 		player2(socketComunica[1], socketComunica[2]);
 		
@@ -60,6 +61,9 @@ int main (int argc, char **argv) {
 
 void player1(int in ,int out){
 	char p1;
+	
+	printf("monkaS_1");
+	
   	if(recv(in, &p1, 1, 0) > 0){
 	    printf("\nil carattere ricevuto da p1 e': %c", p1);
 	    send(out, &p1, 1, 0);
@@ -68,6 +72,9 @@ void player1(int in ,int out){
 
 void player2(int in ,int out){
 	char p2;
+	
+	printf("monkaS_2");
+	
   	if(recv(in, &p2, 1, 0) > 0){
 	    printf("\nil carattere ricevuto da p2 e': %c ", p2);
 	    send(out, &p2, 1, 0);
