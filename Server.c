@@ -50,7 +50,7 @@ int main (int argc, char **argv) {
 	while(check){
 		printf("monkaS");
 		player1(socketComunica[0], socketComunica[1]);
-		player2(socketComunica[1], socketComunica[2]);
+		player2(socketComunica[1], socketComunica[0]);
 		
 		//controllo caso di vittoria
 	}
