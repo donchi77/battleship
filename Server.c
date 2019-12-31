@@ -79,6 +79,8 @@ int main (int argc, char **argv) {
 	close(socketD[0]);
 	close(socketD[1]);
 	close(socketC);
+
+	return 0; 
 }
 
 //azioni client (invio coordinate)
