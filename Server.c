@@ -89,18 +89,17 @@ int action(int in ,int out){
 	
   	if(recv(in, &x, 1, 0) < 0){
 		perror("Errore nella ricezione dei dati");
-  	} else {
-		if(send(out, &x, 1, 0) < 0){
-			perror("Errore nel'invio dei dati");
-		}
-	}
+  	}
 
 	if(recv(in, &y, 1, 0) < 0){
 		perror("Errore nella ricezione dei dati");
-	} else {
-		if(send(out, &y, 1, 0) < 0){
-			perror("Errore nel'invio dei dati");
-		}
+	} 
+
+	if(send(out, &x, 1, 0) < 0){
+		perror("Errore nel'invio dei dati");
+	}
+	if(send(out, &y, 1, 0) < 0){
+		perror("Errore nel'invio dei dati");
 	}
 
 	if(recv(out, &shot, 1, 0) < 0){
