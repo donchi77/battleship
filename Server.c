@@ -7,7 +7,7 @@
 #include <stdbool.h> 
 #include <string.h> 
 
-#define SERVER_PORT 8080
+#define SERVER_PORT 8081
 
 int action(int ,int);
 void getName(int ,int);
@@ -20,7 +20,7 @@ int main (int argc, char **argv) {
 	//apertura socket
 	printf ("socket()\n");
 	if((socketC = socket(AF_INET, SOCK_STREAM, 0)) == -1){
-		perror("chiamata della system call socket() fallita");
+		perror("\nErrore creazione socket");
 		return(1);
 	}
 	
@@ -31,7 +31,7 @@ int main (int argc, char **argv) {
 	//bind
 	printf ("bind()\n");
 	if (bind(socketC, (struct sockaddr*)&server, sizeof server) == -1){
-		perror("chiamata della bind() fallita");
+		perror("\nErrore bind");
 		return(2);
 	}
 	
@@ -45,8 +45,8 @@ int main (int argc, char **argv) {
 		client_len = sizeof(client);
 		if ((socketD[i] = accept(socketC, (struct sockaddr*)&client, &client_len)) < 0)
 		{
-		perror("connessione non accettata");
-		return(3);
+			perror("\nErrore accept");
+			return(3);
 		}
 		
 		send(socketD[i], &player1, 1, 0);	//Invio 1 G1, 0 G2
@@ -85,17 +85,33 @@ int main (int argc, char **argv) {
 
 //azioni client (invio coordinate)
 int action(int in ,int out){
-	char x, y; 	
+	int x, y, shot; 	
 	
-  	if(recv(in, &x, 1, 0) > 0){
-	    send(out, &x, 1, 0);
-  	}
+  	if(recv(in, &x, 1, 0) < 0){
+		perror("Errore nella ricezione dei dati");
+  	} else {
+		if(send(out, &x, 1, 0) < 0){
+			perror("Errore nel'invio dei dati");
+		}
+	}
 
-	if(recv(in, &y, 1, 0) > 0){
-	    send(out, &y, 1, 0);
-  	}
+	if(recv(in, &y, 1, 0) < 0){
+		perror("Errore nella ricezione dei dati");
+	} else {
+		if(send(out, &y, 1, 0) < 0){
+			perror("Errore nel'invio dei dati");
+		}
+	}
+
+	if(recv(out, &shot, 1, 0) < 0){
+		perror("Errore nella ricezione dei dati");
+	} else {
+		if(send(in, &shot, 1, 0) < 0){
+			perror("Errore nel'invio dei dati");
+		}
+	}
 	
-	if(x == 'x' && y == 'x'){
+	if(shot == 50){
 		return 2;	//uno dei client ha perso
 	} else {
 		return 1;
@@ -107,11 +123,17 @@ void getName(int in ,int out){
 	int nameLen;	//lunghezza nome
 	char buffer[32] = "";	//buffer in cui viene salvato temporaneamente il nome
 	
-  	if(recv(in, &nameLen, 2, 0) > 0){
+  	if(recv(in, &nameLen, 2, 0) < 0){
+		perror("Errore nella ricezione dei dati");
   	}
-	if(recv(in, &buffer, nameLen, 0) > 0){
+	if(recv(in, &buffer, nameLen, 0) < 0){
+		perror("Errore nella ricezione dei dati");
   	}
 
-	send(out, &nameLen, 2, 0);
-	send(out, &buffer, nameLen, 0);
+	if(send(out, &nameLen, 2, 0) < 0){	
+		perror("Errore nel'invio dei dati");
+	}
+	if(send(out, &buffer, nameLen, 0) < 0){
+		perror("Errore nel'invio dei dati");
+	}
 }
