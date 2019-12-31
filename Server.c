@@ -9,18 +9,15 @@
 
 #define SERVER_PORT 8080
 
-bool check = true;
-char namePlayer1[32] = "", namePlayer2[32] = "";
-
-void action(int ,int);
-void getName(int ,int, int);
-//void getName1(int ,int);
-//void getName2(int ,int);
+int action(int ,int);
+void getName(int ,int);
 
 int main (int argc, char **argv) {
-	int socketC, client_len, socketD[2], player1 = 1;                      
+	int socketC, client_len, socketD[2], player1 = 1, move = 0;   //player1 = stabilire chi e il giocatore1 - move = controllo in caso di vittoria                    
 	struct sockaddr_in server, client;
+	bool game = true;	//controllare lo stato del gioco (in gioco / concluso)
 	
+	//apertura socket
 	printf ("socket()\n");
 	if((socketC = socket(AF_INET, SOCK_STREAM, 0)) == -1){
 		perror("chiamata della system call socket() fallita");
@@ -31,15 +28,18 @@ int main (int argc, char **argv) {
 	server.sin_addr.s_addr = htonl(INADDR_ANY);
 	server.sin_port = htons(SERVER_PORT);
 	
+	//bind
 	printf ("bind()\n");
 	if (bind(socketC, (struct sockaddr*)&server, sizeof server) == -1){
 		perror("chiamata della bind() fallita");
 		return(2);
 	}
 	
+	//listen
 	printf ("listen()\n");
 	listen(socketC, 2);           
 
+	//accept
   	printf ("accept()\n");
   	for(int i = 0 ; i < 2 ; i++){
 		client_len = sizeof(client);
@@ -49,32 +49,41 @@ int main (int argc, char **argv) {
 		return(3);
 		}
 		
-		send(socketD[i], &player1, 1, 0);
+		send(socketD[i], &player1, 1, 0);	//Invio 1 G1, 0 G2
 		player1--;		
 	}
+	
+	//Scambio dei nomi
+	getName(socketD[0] , socketD[1]);
+	getName(socketD[1] , socketD[0]);
 
-	getName(socketD[0], socketD[1], 1);
-	getName(socketD[1], socketD[0], 2);
+	while(game){
+		move = action(socketD[0], socketD[1]);	//mossa giocatore 1
+		if(move == 2){
+			game =false;
+			printf("\nfine game\n");
 
-	printf("\n");
-	printf("\nIl nome di p1 e': %s", namePlayer1);
-	printf("\nIl nome di p2 e': %s", namePlayer2);
-	printf("\n");
-	printf("\n");
+			move = 0;
+		}
 
-	while(check){
-		action(socketD[0], socketD[1]);
-		action(socketD[1], socketD[0]);
+		move = action(socketD[1], socketD[0]);	//mossa giocatore 2
+		if(move == 2){
+			game =false;
+			printf("\nfine game\n");
 
-		//controllo caso di vittoria
+			move = 0;
+		}
 	}
 	
+	//chiusura socket
 	close(socketD[0]);
 	close(socketD[1]);
+	close(socketC);
 }
 
-void action(int in ,int out){
-	int x, y;
+//azioni client (invio coordinate)
+int action(int in ,int out){
+	char x, y; 	
 	
   	if(recv(in, &x, 1, 0) > 0){
 	    send(out, &x, 1, 0);
@@ -83,28 +92,24 @@ void action(int in ,int out){
 	if(recv(in, &y, 1, 0) > 0){
 	    send(out, &y, 1, 0);
   	}
+	
+	if(x == 'x' && y == 'x'){
+		return 2;	//uno dei client ha perso
+	} else {
+		return 1;
+	}
 }
 
-void getName(int in ,int out, int saveName){
-	int nameLen;
-	char buffer[32] = "";
+//ricezione e invio dei nickname
+void getName(int in ,int out){
+	int nameLen;	//lunghezza nome
+	char buffer[32] = "";	//buffer in cui viene salvato temporaneamente il nome
 	
   	if(recv(in, &nameLen, 2, 0) > 0){
   	}
-	fflush(stdout);
-
 	if(recv(in, &buffer, nameLen, 0) > 0){
   	}
-	fflush(stdout);
 
 	send(out, &nameLen, 2, 0);
-	fflush(stdout);
 	send(out, &buffer, nameLen, 0);
-	fflush(stdout);	
-
-	if(saveName == 1){
-		strcpy(namePlayer1, buffer);
-	} else {
-		strcpy(namePlayer2, buffer);
-	}
 }
