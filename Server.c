@@ -74,11 +74,14 @@ int main (int argc, char **argv) {
 }
 
 void action(int in ,int out){
-	char a;
+	int x, y;
 	
-  	if(recv(in, &a, 1, 0) > 0){
-	    printf("\nil carattere ricevuto da p1 e': %c", a);
-	    send(out, &a, 1, 0);
+  	if(recv(in, &x, 1, 0) > 0){
+	    send(out, &x, 1, 0);
+  	}
+
+	if(recv(in, &y, 1, 0) > 0){
+	    send(out, &y, 1, 0);
   	}
 }
 
