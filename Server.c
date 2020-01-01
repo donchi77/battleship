@@ -7,7 +7,7 @@
 #include <stdbool.h> 
 #include <string.h> 
 
-#define SERVER_PORT 8081
+#define SERVER_PORT 8080
 
 int action(int ,int);
 void getName(int ,int);
@@ -65,13 +65,15 @@ int main (int argc, char **argv) {
 
 			move = 0;
 		}
+		
+		if(move != 0){ 
+			move = action(socketD[1], socketD[0]);	//mossa giocatore 2
+			if(move == 2){
+				game =false;
+				printf("\nfine game\n");
 
-		move = action(socketD[1], socketD[0]);	//mossa giocatore 2
-		if(move == 2){
-			game =false;
-			printf("\nfine game\n");
-
-			move = 0;
+				move = 0;
+			}
 		}
 	}
 	
@@ -110,7 +112,7 @@ int action(int in ,int out){
 		}
 	}
 	
-	if(shot == 50){
+	if(shot == 2){
 		return 2;	//uno dei client ha perso
 	} else {
 		return 1;

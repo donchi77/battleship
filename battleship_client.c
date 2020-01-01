@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         show_info();
 
     init_tables();
-    //set_coords();
+    set_coords();
     print_tables();
  
     // -----> FASE 2: MATCHMAKING
@@ -335,14 +335,17 @@ void connect_to_server(char *IP, char *port, char *nickname) {
             if (!endgame)
                 recv_coords(sockfd, &x, &y, &ships_destroyed);
         } else {
-            if (!endgame)
+            if (!endgame){
                 recv_coords(sockfd, &x, &y, &ships_destroyed);
-            
-            send_coords(sockfd, &x, &y, nickname);
+            	if(ships_destroyed != 0) 
+			    send_coords(sockfd, &x, &y, nickname);
 
-            hit = recv_check(sockfd, nickname, nick_enemy);
-            
-            endgame = verify(hit, &x, &y);
+			    hit = recv_check(sockfd, nickname, nick_enemy);
+			    
+			    endgame = verify(hit, &x, &y);
+		} else {
+			endgame = 1;
+		}
         }
 
         print_tables();
@@ -403,13 +406,11 @@ void recv_coords(int sockfd, int *x, int *y, int *ships_des) {
     if (recv(sockfd, y, 1, 0) == SOCKET_ERROR)
         fatal("Impossible reading Y.\n");
     debug("X & Y received.\n");
-
     int check = 0;
     if (your_table[*x][*y]){
         printf("\t\nNave colpita!\n");
         your_table[*x][*y] = 0;
-        *ships_des--;
-
+        *ships_des=*ships_des-1;
         if (*ships_des > 0)
             check = 1;
         else 
