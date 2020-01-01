@@ -379,10 +379,9 @@ void send_coords(int sockfd, int *x, int *y, char *nick) {
     
     *x = insertXY('x');
     *y = insertXY('y');
-
     if (send(sockfd, x, 1, 0) == SOCKET_ERROR)
         fatal("Impossible sending X.\n");
-    if (send(sockfd, y, 1, 0))
+    if (send(sockfd, y, 1, 0) == SOCKET_ERROR)
         fatal("Impossible sending Y.\n");
     debug("X & Y sent.\n");
 }
