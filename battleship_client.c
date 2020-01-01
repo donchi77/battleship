@@ -158,7 +158,7 @@ void show_info() {
 void init_tables() {
     // Se 0 allora acqua, se 1 allora nave.
     memset(your_table, 0, DIM_TABLE*(sizeof(your_table[0])));
-    memset(enemy_table, 2, DIM_TABLE*(sizeof(enemy_table[0])));
+    memset(enemy_table, 0, DIM_TABLE*(sizeof(enemy_table[0])));
     
     debug("Matrix initialized with 0s.\n");
 }
@@ -228,7 +228,7 @@ void print_tables() {
     newline(DIM_TABLE);
     for (i = 0; i < DIM_TABLE; i++) {
         for (j = 0; j < DIM_TABLE; j++) {
-                if (enemy_table[i][j] == 2) 
+                if (enemy_table[i][j] == 0) 
                     j == 0 ? printf("| . ") : printf(" . ");
                 else if (enemy_table[i][j] == 1)
                     j == 0 ? printf("| X ") : printf(" X ");
@@ -313,9 +313,9 @@ void connect_to_server(char *IP, char *port, char *nickname) {
         if (recv(sockfd, nick_enemy, len_enemy, 0) == SOCKET_ERROR)
             fatal("Impossible reading other player nickname.\n");
         
-        debug("Nickname received.");
+        debug("Nickname received.\n");
         nick_enemy[strcspn(nick_enemy, "\n")] = 0;
-        printf("Sei contro %s!\n", nick_enemy);
+        printf("\tSei contro %s!\n", nick_enemy);
 
         wait_player();
     }
@@ -382,6 +382,8 @@ void send_coords(int sockfd, int *x, int *y, char *nick) {
     
     *x = insertXY('x');
     *y = insertXY('y');
+    printf("\n");
+
     if (send(sockfd, x, 1, 0) == SOCKET_ERROR)
         fatal("Impossible sending X.\n");
     if (send(sockfd, y, 1, 0) == SOCKET_ERROR)
@@ -392,7 +394,7 @@ void send_coords(int sockfd, int *x, int *y, char *nick) {
 int recv_check(int sockfd, char *nick, char *nick_en) {
     int hit = 0;
 
-    printf("\t\n%s attendi la risposta di %s.\n", nick, nick_en);
+    printf("\n\t%s attendi la risposta di %s.\n", nick, nick_en);
     if (recv(sockfd, &hit, 1, 0) == SOCKET_ERROR)
         fatal("Impossible receiving hit.\n");
     debug("Hit received.\n");
@@ -406,11 +408,13 @@ void recv_coords(int sockfd, int *x, int *y, int *ships_des) {
     if (recv(sockfd, y, 1, 0) == SOCKET_ERROR)
         fatal("Impossible reading Y.\n");
     debug("X & Y received.\n");
+
     int check = 0;
     if (your_table[*x][*y]){
-        printf("\t\nNave colpita!\n");
+        printf("\n\tNave colpita!\n");
         your_table[*x][*y] = 0;
-        *ships_des=*ships_des-1;
+        *ships_des = *ships_des - 1;
+
         if (*ships_des > 0)
             check = 1;
         else 
@@ -420,7 +424,7 @@ void recv_coords(int sockfd, int *x, int *y, int *ships_des) {
             fatal("Impossible sending check.\n");
         debug("Check sent.\n");
     } else {
-        printf("\t\nNave mancata!\n");
+        printf("\n\tNave mancata!\n");
 
         if (send(sockfd, &check, 1, 0) == SOCKET_ERROR)
             fatal("Impossible sending check.\n");
@@ -430,7 +434,7 @@ void recv_coords(int sockfd, int *x, int *y, int *ships_des) {
 
 int verify(int hit, int *x, int *y) {
     if (hit == 0) {
-        enemy_table[*x][*y] = 0;
+        enemy_table[*x][*y] = 2;
         printf("\t\nMancato!\n");
         return 0;
     }
