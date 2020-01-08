@@ -9,7 +9,7 @@
 
 #define SERVER_PORT 8080
 
-int action(int ,int, int);
+int action(int ,int);
 void getName(int ,int, int);
 
 int main (int argc, char **argv) {
@@ -50,6 +50,7 @@ int main (int argc, char **argv) {
 
 	//accept
   	printf ("Accept\n");
+	printf("Attendendo la connessione dei giocatori...\n");
   	for(int i = 0 ; i < 2 ; i++){
 		client_len = sizeof(client);
 
@@ -60,7 +61,7 @@ int main (int argc, char **argv) {
 		}else{
 			if(player1==1){
 				printf("\nGiocatore 1 connesso");
-				printf("\n\nAttendendo connessione del giocatore 2...\n");
+				printf("\n\nAttendendo la connessione del giocatore 2...\n");
 			} else {
 				printf("\nGiocatore 2 connesso");
 			}
@@ -91,7 +92,7 @@ int main (int argc, char **argv) {
 	while(game){
 		printf("Attendendo mossa del giocatore 1...\n\n");
 
-		move = action(socketD[0], socketD[1], 1);	//mossa giocatore 1
+		move = action(socketD[0], socketD[1]);	//mossa giocatore 1
 		if(move == 2){
 			game =false;
 
@@ -106,7 +107,7 @@ int main (int argc, char **argv) {
 		if(move != 0){ 
 			printf("Attendendo mossa del giocatore 2...\n\n");
 
-			move = action(socketD[1], socketD[0], 2);	//mossa giocatore 2
+			move = action(socketD[1], socketD[0]);	//mossa giocatore 2
 			if(move == 2){
 				game =false;
 				
@@ -130,8 +131,8 @@ int main (int argc, char **argv) {
 }
 
 //azioni client (invio coordinate)
-int action(int in ,int out, int player){
-	int x, y, shot; 	
+int action(int in ,int out){
+	int x = 0, y = 0, shot = 0; 	
 	
   	if(recv(in, &x, 1, 0) < 0){
 		perror("Errore nella ricezione dei dati");
@@ -165,7 +166,7 @@ int action(int in ,int out, int player){
 
 //ricezione e invio dei nickname
 void getName(int in ,int out, int player){
-	int nameLen;	//lunghezza nome
+	int nameLen = 0;	//lunghezza nome
 	char buffer[32] = "";	//buffer in cui viene salvato temporaneamente il nome
 	
   	if(recv(in, &nameLen, 2, 0) < 0){
